@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">StockMarketCleanArchitectureApp</string>
+    <string name="app_name">StockMarket</string>
+    <string name="api_key">7RMMQOGPKMEQCSUE</string>
 </resources>
