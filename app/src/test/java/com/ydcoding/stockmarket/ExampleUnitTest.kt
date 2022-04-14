@@ -1,4 +1,4 @@
-package com.ydcoding.stockmarketcleanarchitectureapp
+package com.ydcoding.stockmarket
 
 import org.junit.Test
 
