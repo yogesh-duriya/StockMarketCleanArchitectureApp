@@ -5,9 +5,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ydcoding.stockmarket.domain.model.IntradayInfo
 import kotlin.math.round
@@ -55,9 +56,61 @@ fun StockChart(
         (0..5).forEach { i ->
             drawContext.canvas.nativeCanvas.apply {
                 drawText(
-                    round(lowerValue + priceStep * i).toString()
+                    round(lowerValue + priceStep * i).toString(),
+                    30f,
+                    size.height - spacing - i * size.height / 5f,
+                    textPaint
                 )
             }
         }
+
+        var lastX = 0f
+        val strokePath = Path().apply {
+            val height = size.height
+            for( i in infos.indices) {
+                val info = infos[i]
+                val nextInfo = infos.getOrNull(i + 1) ?: infos.last()
+                val leftRatio = (info.close - lowerValue) / (upperValue - lowerValue)
+                val rightRatio = (nextInfo.close - lowerValue) / (upperValue - lowerValue)
+                val x1  = spacing + i * spacePerHour
+                val y1 = height - spacing - (leftRatio * height).toFloat()
+                val x2  = spacing + (i + 1) * spacePerHour
+                val y2 = height - spacing - (rightRatio * height).toFloat()
+                if (i == 0) {
+                    moveTo(x1, y1)
+                }
+                lastX = (x1 + x2) /2f
+                quadraticBezierTo(
+                    x1, y1, (x1 + x2) / 2f, (y1 + y2) / 2f
+                )
+
+            }
+        }
+
+        val filePath = android.graphics.Path(strokePath.asAndroidPath())
+            .asComposePath()
+            .apply {
+                lineTo(lastX , size.height - spacing)
+                lineTo(spacing , size.height - spacing)
+                close()
+            }
+        drawPath(
+            path = filePath,
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    transparentGraphColor,
+                    Color.Transparent
+                ),
+                endY = size.height - spacing
+            )
+        )
+        drawPath(
+            path = strokePath,
+            color = graphColor,
+            style = Stroke(
+                width = 3.dp.toPx(),
+                cap = StrokeCap.Round
+            )
+        )
     }
 }

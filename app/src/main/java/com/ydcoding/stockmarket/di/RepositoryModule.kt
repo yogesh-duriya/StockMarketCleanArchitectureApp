@@ -5,10 +5,10 @@ import com.ydcoding.stockmarket.data.csv.CompanyListingsParser
 import com.ydcoding.stockmarket.data.csv.IntradayInfoParser
 import com.ydcoding.stockmarket.data.repository.StockRepositoryImpl
 import com.ydcoding.stockmarket.domain.model.CompanyListing
+import com.ydcoding.stockmarket.domain.model.IntradayInfo
 import com.ydcoding.stockmarket.domain.repository.StockRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -27,7 +27,7 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindIntradayInfoParser(
         intradayInfoParser: IntradayInfoParser
-    ): CSVParser<IntradayInfoParser>
+    ): CSVParser<IntradayInfo>
 
     @Binds
     @Singleton
